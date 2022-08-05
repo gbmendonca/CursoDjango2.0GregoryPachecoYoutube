@@ -1,0 +1,42 @@
+Ciclo de funcionamento do django (a imagem do ciclo): cliente browser faz request, o request chega no servidor nginx/apache, sendo o servidor local o que está ativo neste momento. o web server, junto ao wsgi, faz a requisição e passa a request para os middlewares do django que farão uma série de coisas com a request. as coisas que os middlewares farão são o último parâmetro de cada middleware (securitymiddleware valida segurança, session middleware valida seção). - depois que os middlewares fazem seu trabalho, a request é enviada para o sistema de url resolution (no arquivo urls.py)
+
+
+1. cliente (browser) <=> web server (Nginx/Apache) <=> wsgi (wsgi.py, Gunicorn/uWSGI) <=> request (middlewares) 
+
+    - manda informação e o pedido chega no server. agora é o servidor local rodando. o web server, junto ao wsgi, faz a requisição e passar a request para os middlewares do django que farão uma série de coisas com a request. as coisas que os middlewares farão são o último parâmetro de cada middleware (securitymiddleware valida segurança, session middleware valida seção)
+
+2. request (middlewares) -> url resolution (urls.py). é a resolução de urls
+
+    - depois que os middlewares fazem seu trabalho, a request é enviada para o sistema de url resolution (no arquivo urls.py)
+
+    - se eu acessar http://127.0.0.1:8000/admin/, o django vai tentar achar algum path que seja /admin, como é o caso da url  path('admin/', admin.site.urls), 
+
+    - se ele achar a url, vai retornar/chamar uma view, que no caso é a admin.site.urls, que é uma função do sites.py. nesse arquivo dá pra achar as views criadas e o que elas retornam
+
+    - em suma, o sistema de resolução das urls é quando a informação passa pelos middlewares e chega ao sistema para resolver as urls, ver que view ela quer chamar. a view resolve tudo depois do processo de url resolution. 
+
+    - se o endereço acessado não tiver sido cadastrado, vai dar erro
+
+3. view
+
+    - o que é?
+        R.: trecho de código que resolve a url da página que o usuário quer abrir
+
+    - como ocorre?
+        R.: quando o django resolve a url e ele já sabe com quem que ele vai falar (ou quem ele chama), ele encaminha a request para view 
+
+    - como criar uma view simples?
+        R.: no código abaixo, do arquivo views.py, HttpResponse é importado de django.http e também é importado datetime. a view é declarada por uma função que recebe request como parâmetro. nesse caso, a view é a função home, que recebeu request como parâmetro (como toda view), está pegando a data do sistema com datetine.now() e no html recebendo string está se criando uma string com um corpo (body) html cuja frase no % será substituido pelo now precedido pelo % no fim da linha. em resumo, está dizendo a hora do sistema e dando return na response 
+
+from django.http import HttpResponse            ###essa classe httpresponse cuida da criação de responses, que é devolvida pro navegador pelo retorno da função home, da linha 9
+import datetime
+
+def home(request):          ###toda view é uma função que recebe request como parâmetro
+    now = datetime.datetime.now()
+    html = "<html><body> It is now %s</body></html>" % now
+    return HttpResponse(html)
+
+
+
+Middlewares
+- estão no arquivo settings.py, na pasta (possivelmente um app, preciso confirmar), controle_gastos
