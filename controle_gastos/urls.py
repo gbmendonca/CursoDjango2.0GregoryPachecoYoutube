@@ -19,7 +19,7 @@ from contas.views import home          #o django vai em contas.views (pasta cont
 
 urlpatterns = [
     path('admin/', admin.site.urls), ###inicialmente so vem com essa url cadastrada que é a de acessar o admin
-    path('contas/', home)   ###para criar a view 
+    path('home', home)   ###para criar a view 
 ]
 
 
